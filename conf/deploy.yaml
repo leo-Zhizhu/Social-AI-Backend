@@ -1,0 +1,10 @@
+elasticsearch:
+  address: "http://34.56.58.141:9200"
+  username: "EZ4HAL"
+  password: "0730xiaozhu"
+
+gcs:
+  bucket: "socialai_001"
+
+token:
+  secret: "secret"
