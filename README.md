@@ -58,13 +58,7 @@ A Go-based backend service for a social media application with image/video uploa
    token:
      secret: "your-jwt-secret"
    ```
-
-**⚠️ Important**: Never commit `conf/deploy.yaml` to version control. It contains sensitive credentials and is already in `.gitignore`.
-
-### Environment Variables (Alternative)
-
-For production deployments, consider using environment variables or Google Secret Manager instead of configuration files.
-
+   
 ## API Endpoints
 
 ### Public Endpoints
@@ -97,14 +91,6 @@ gcloud app deploy app.yaml
 ```bash
 go run main.go
 ```
-
-## Security Best Practices
-
-- ✅ Configuration files with secrets are excluded from git
-- ✅ Use template files (`.example`) for documentation
-- 🔒 For production, use Google Secret Manager or environment variables
-- 🔒 Rotate credentials regularly
-- 🔒 Use strong, unique secrets for JWT tokens
 
 ## Requirements
 
