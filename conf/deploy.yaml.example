@@ -1,0 +1,11 @@
+elasticsearch:
+  address: "http://your-elasticsearch-host:9200"
+  username: "your-username"
+  password: "your-password"
+
+gcs:
+  bucket: "your-bucket-name"
+
+token:
+  secret: "your-jwt-secret-key"
+

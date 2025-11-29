@@ -36,9 +36,13 @@ Thumbs.db
 # Logs
 *.log
 
-# Environment files (keep deploy.yaml but ignore local configs)
+# Environment files and sensitive configuration
 .env
 .env.local
+conf/deploy.yaml
+conf/*.yaml
+!conf/deploy.yaml.example
+!conf/*.example.yaml
 
 # Temporary files
 tmp/
