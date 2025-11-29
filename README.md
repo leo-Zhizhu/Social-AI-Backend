@@ -71,13 +71,6 @@ A Go-based backend service for a social media application with image/video uploa
 - `GET /search?user=<username>` - Search posts by user
 - `DELETE /post/{id}` - Delete a post
 
-## Elasticsearch Refresh Fixes
-
-This version includes fixes for Elasticsearch near real-time search inconsistencies:
-- Writes are immediately searchable with `Refresh("wait_for")`
-- Reads refresh the index before searching to ensure consistency
-- Prevents stale results and inconsistent query behavior
-
 ## Deployment
 
 ### To Google App Engine
