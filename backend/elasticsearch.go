@@ -84,9 +84,25 @@ func (backend *ElasticsearchBackend) ReadFromES(query elastic.Query, index strin
 		fmt.Printf("Warning: Failed to refresh index %s: %v\n", index, err)
 	}
 
+	// First, get the total count to determine how many results to fetch
+	countResult, err := backend.client.Count(index).Query(query).Do(context.Background())
+	if err != nil {
+		return nil, fmt.Errorf("failed to count documents: %v", err)
+	}
+
+	// Set size to get all matching documents (with a reasonable upper limit)
+	size := int(countResult)
+	if size > 10000 {
+		size = 10000 // Limit to prevent memory issues
+	}
+
+	// Debug: log the size being used
+	fmt.Printf("Search query: count=%d, size=%d\n", countResult, size)
+
 	searchResult, err := backend.client.Search().
 		Index(index).
 		Query(query).
+		Size(size).
 		Pretty(true).
 		Do(context.Background())
 	if err != nil {
@@ -107,12 +123,30 @@ func (backend *ElasticsearchBackend) SaveToES(i interface{}, index string, id st
 }
 
 func (backend *ElasticsearchBackend) DeleteFromES(query elastic.Query, index string) error {
-	_, err := backend.client.DeleteByQuery().
+	// DeleteByQuery doesn't support Refresh("wait_for"), so we use WaitForCompletion
+	// and then manually refresh the index
+	result, err := backend.client.DeleteByQuery().
 		Index(index).
 		Query(query).
+		WaitForCompletion(true).
 		Pretty(true).
-		Refresh("wait_for").
 		Do(context.Background())
 
-	return err
+	if err != nil {
+		return err
+	}
+
+	// Refresh the index after deletion to make changes immediately searchable
+	_, err = backend.client.Refresh(index).Do(context.Background())
+	if err != nil {
+		fmt.Printf("Warning: Failed to refresh index after deletion: %v\n", err)
+		// Don't fail the deletion if refresh fails
+	}
+
+	// Log deletion result for debugging
+	if result != nil {
+		fmt.Printf("DeleteByQuery result: deleted %d documents\n", result.Deleted)
+	}
+
+	return nil
 }
